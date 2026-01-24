@@ -4,7 +4,7 @@ performance virtual machine instead of the Dis virtual machine.  It also uses
 the libuv I/O library for maximum portability, efficient event processing and
 thread management.
 
-See the [node9-hackers-guide.txt][hackers] file in ./doc for more information.
+See the [node9.md][node9] file in ./doc for more information.
 
 For current status and development information, check out the [Wiki][wiki9]
 
@@ -36,5 +36,5 @@ See Also:
 [luajit]: http://luajit.org/
 [libuv]: http://docs.libuv.org/en/v1.x/
 [torch]: https://github.com/torch
-[hackers]: https://github.com/jvburnes/node9/blob/master/doc/node9-hackers-guide.txt
-[wiki9]: https://github.com/jvburnes/node9/wiki
+[hackers]: https://github.com/9cog/9n9/blob/main/doc/node9.md
+[wiki9]: https://github.com/9cog/9n9/wiki
