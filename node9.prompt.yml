@@ -4,11 +4,12 @@
 # Secret names:
 # - GitHub Copilot: MODEL_TOKEN (environment secret)
 # - GitHub Actions: MOD_TOKEN (repository secret)
+# - Local development: MODEL_KEY (generic fallback)
 
 # Model configuration - uses environment variables
-# Will check MODEL_TOKEN (Copilot), MOD_TOKEN (Actions), or MODEL_KEY (generic/local)
+# Priority order: MODEL_TOKEN > MOD_TOKEN > MODEL_KEY
 model: "{{MODEL_PROVIDER:openai}}/{{MODEL_NAME:gpt-4o}}"
-api_key: "{{MODEL_TOKEN:{{MOD_TOKEN:{{MODEL_KEY}}}}}}"
+api_key: "{{MODEL_TOKEN:}}"
 temperature: "{{MODEL_TEMPERATURE:0.7}}"
 max_tokens: "{{MODEL_MAX_TOKENS:2000}}"
 

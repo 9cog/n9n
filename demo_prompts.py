@@ -80,9 +80,16 @@ def prepare_prompt(config: Dict[str, Any], prompt_name: str, input_text: str) ->
     env_vars = dict(os.environ)
     env_vars['input'] = input_text
     
+    # Handle API key fallback manually: MODEL_TOKEN > MOD_TOKEN > MODEL_KEY
+    api_key_template = str(config.get('api_key', ''))
+    if '{{MODEL_TOKEN' in api_key_template:
+        # Check for keys in priority order
+        api_key = env_vars.get('MODEL_TOKEN') or env_vars.get('MOD_TOKEN') or env_vars.get('MODEL_KEY', '')
+    else:
+        api_key = substitute_vars(api_key_template, env_vars)
+    
     # Substitute variables in model config
     model = substitute_vars(str(config.get('model', 'openai/gpt-4o')), env_vars)
-    api_key = substitute_vars(str(config.get('api_key', '')), env_vars)
     temperature = float(substitute_vars(str(config.get('temperature', '0.7')), env_vars))
     max_tokens = int(substitute_vars(str(config.get('max_tokens', '2000')), env_vars))
     
