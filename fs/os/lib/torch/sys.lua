@@ -1,6 +1,16 @@
 ----------------------------------------------------------------------
 -- sys - a package that provides simple system (unix) tools
 -- Adapted for Node9 from torch/sys
+--
+-- Platform Support:
+--   - Linux: Full support
+--   - macOS: Full support  
+--   - BSD variants: Full support
+--   - Windows: Limited support (some functions may not work)
+--
+-- Note: This module is optimized for Unix-like systems where Node9
+-- primarily operates. Windows support is minimal as Node9 is based
+-- on Inferno OS which targets Unix environments.
 ----------------------------------------------------------------------
 
 local sys = {}
@@ -24,16 +34,18 @@ end
 --------------------------------------------------------------------------------
 local ffi = require 'ffi'
 
--- Define clock_gettime for high precision timing
-ffi.cdef[[
-   typedef long time_t;
-   typedef struct timespec {
-      time_t tv_sec;
-      long   tv_nsec;
-   } timespec;
-   
-   int clock_gettime(int clk_id, struct timespec *tp);
-]]
+-- Define clock_gettime for high precision timing (Unix only)
+if ffi.os ~= "Windows" then
+   ffi.cdef[[
+      typedef long time_t;
+      typedef struct timespec {
+         time_t tv_sec;
+         long   tv_nsec;
+      } timespec;
+      
+      int clock_gettime(int clk_id, struct timespec *tp);
+   ]]
+end
 
 -- CLOCK_MONOTONIC value varies by platform
 -- Linux: 1, macOS: 6, FreeBSD: 4, Windows: not available
@@ -47,6 +59,10 @@ else
 end
 
 function sys.clock()
+   if ffi.os == "Windows" then
+      -- Fallback to os.clock() on Windows (less precise)
+      return os.clock()
+   end
    local ts = ffi.new("struct timespec")
    ffi.C.clock_gettime(CLOCK_MONOTONIC, ts)
    return tonumber(ts.tv_sec) + tonumber(ts.tv_nsec) / 1e9
@@ -120,7 +136,9 @@ function sys.fpath()
    local sep = package.config:sub(1,1) -- get path separator
    
    -- Make absolute if relative
-   if not fpath:match('^'..sep) and not fpath:match('^%a:') then
+   -- Check for Unix absolute path (starts with /) or Windows absolute path (drive letter)
+   local is_absolute = fpath:match('^'..sep) or fpath:match('^%a:[/\\]')
+   if not is_absolute then
       fpath = sys.execute('pwd') .. sep .. fpath
    end
    
@@ -166,20 +184,32 @@ end
 --------------------------------------------------------------------------------
 -- sleep
 --------------------------------------------------------------------------------
-ffi.cdef[[
-   unsigned int sleep(unsigned int seconds);
-   int usleep(unsigned int usec);
-]]
-
-function sys.sleep(seconds)
-   ffi.C.sleep(math.floor(seconds))
-   if seconds % 1 > 0 then
-      ffi.C.usleep((seconds % 1) * 1000000)
+if ffi.os ~= "Windows" then
+   ffi.cdef[[
+      unsigned int sleep(unsigned int seconds);
+      int usleep(unsigned int usec);
+   ]]
+   
+   function sys.sleep(seconds)
+      ffi.C.sleep(math.floor(seconds))
+      if seconds % 1 > 0 then
+         ffi.C.usleep((seconds % 1) * 1000000)
+      end
    end
-end
-
-function sys.usleep(usec)
-   ffi.C.usleep(usec)
+   
+   function sys.usleep(usec)
+      ffi.C.usleep(usec)
+   end
+else
+   -- Windows fallback using busy wait (not ideal but works)
+   function sys.sleep(seconds)
+      local start = os.clock()
+      while os.clock() - start < seconds do end
+   end
+   
+   function sys.usleep(usec)
+      sys.sleep(usec / 1000000)
+   end
 end
 
 --------------------------------------------------------------------------------
