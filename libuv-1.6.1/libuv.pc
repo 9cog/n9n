@@ -7,5 +7,5 @@ Name: libuv
 Version: 1.6.1
 Description: multi-platform support library with a focus on asynchronous I/O.
 
-Libs: -L${libdir} -luv -lpthread -ldl 
+Libs: -L${libdir} -luv -lrt -lpthread -ldl 
 Cflags: -I${includedir}
