@@ -39,3 +39,12 @@
 /testing/*
 /src/build/*
 
+# LuaJIT build artifacts
+/LuaJIT-*/src/host/
+/LuaJIT-*/src/luajit
+/LuaJIT-*/src/libluajit.*
+/LuaJIT-*/src/*.o
+/LuaJIT-*/src/lj_*.h
+/LuaJIT-*/src/jit/*.lua
+/LuaJIT-*/src/lj_vm.s
+
