@@ -48,3 +48,32 @@
 /LuaJIT-*/src/jit/*.lua
 /LuaJIT-*/src/lj_vm.s
 
+# libuv build artifacts
+/libuv*/autom4te.cache/
+/libuv*/.deps/
+/libuv*/.libs/
+/libuv*/src/.deps/
+/libuv*/src/unix/.deps/
+/libuv*/test/.deps/
+/libuv*/Makefile
+/libuv*/Makefile.in
+/libuv*/aclocal.m4
+/libuv*/config.log
+/libuv*/config.status
+/libuv*/configure
+/libuv*/configure~
+/libuv*/libtool
+/libuv*/libuv.pc
+/libuv*/ltmain.sh
+
+# premake and makefiles
+/premake5
+/*.make
+/src/*.make
+/src/styx/libs/*/Makefile
+/src/styx/utils/Makefile
+
+# generated files
+/src/styx/utils/ndate
+/src/include/kerndate.h
+
