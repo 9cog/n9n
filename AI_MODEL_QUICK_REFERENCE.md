@@ -2,9 +2,9 @@
 
 ## 🔑 Key Configuration
 
-**MODEL_KEY is already set up for you!**
-- ✅ Available in GitHub Copilot environment secrets
-- ✅ Available in GitHub Actions repository secrets
+**Secrets are already set up for you!**
+- ✅ **MODEL_TOKEN** - Available in GitHub Copilot environment secrets
+- ✅ **MOD_TOKEN** - Available in GitHub Actions repository secrets
 - ✅ No manual setup needed for GitHub users
 
 ## 📋 Available Prompts
@@ -22,20 +22,30 @@ The `node9.prompt.yml` file includes 7 specialized prompts:
 ## 🚀 Quick Usage
 
 ### With GitHub Copilot
-Just use Copilot in this repository - MODEL_KEY is automatically available!
+Just use Copilot in this repository - MODEL_TOKEN is automatically available!
 
 ### With GitHub Actions
 ```yaml
 env:
-  MODEL_KEY: ${{ secrets.MODEL_KEY }}
+  MOD_TOKEN: ${{ secrets.MOD_TOKEN }}
 ```
 
 ### Local Development (Optional)
 ```bash
 cp .env.example .env
-# Edit .env with your keys
+# Edit .env with your keys (use MODEL_TOKEN or MODEL_KEY)
 source .env
 ```
+
+## 🔐 Secret Names
+
+| Context | Variable Name | Status |
+|---------|---------------|--------|
+| GitHub Copilot | `MODEL_TOKEN` | ✓ Configured in environment secrets |
+| GitHub Actions | `MOD_TOKEN` | ✓ Configured in repository secrets |
+| Local Dev | `MODEL_TOKEN` or `MODEL_KEY` | Set in .env file |
+
+**Fallback order**: MODEL_TOKEN → MOD_TOKEN → MODEL_KEY
 
 ## 📁 Files Created
 
@@ -78,7 +88,7 @@ Full documentation: [doc/AI_MODEL_CONFIGURATION.md](doc/AI_MODEL_CONFIGURATION.m
 
 ## 🔒 Security
 
-- MODEL_KEY never committed to git (in .gitignore)
+- MODEL_TOKEN and MOD_TOKEN never committed to git (in .gitignore)
 - GitHub secrets are encrypted and secure
 - Only authorized users and workflows can access
 
@@ -90,4 +100,4 @@ Edit `node9.prompt.yml` to:
 - Change default settings
 - Add new use cases
 
-All prompts use MODEL_KEY from GitHub secrets automatically!
+All prompts use MODEL_TOKEN/MOD_TOKEN from GitHub secrets automatically!

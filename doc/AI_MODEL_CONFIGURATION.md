@@ -15,25 +15,25 @@ Node9 includes a flexible AI model configuration system that supports:
 
 ### Using with GitHub Copilot (Recommended)
 
-**MODEL_KEY is already configured in GitHub Copilot environment secrets!**
+**MODEL_TOKEN is already configured in GitHub Copilot environment secrets!**
 
-The `MODEL_KEY` and related variables are available automatically when using GitHub Copilot in this repository. No setup needed - just start using the prompts!
+The `MODEL_TOKEN` variable is available automatically when using GitHub Copilot in this repository. No setup needed - just start using the prompts!
 
 ```bash
-# The MODEL_KEY is already available in Copilot environment
+# The MODEL_TOKEN is already available in Copilot environment
 # Just reference the prompts in node9.prompt.yml
 ```
 
 ### Using with GitHub Actions
 
-**MODEL_KEY is configured in repository secrets!**
+**MOD_TOKEN is configured in repository secrets!**
 
-GitHub Actions workflows can access `MODEL_KEY` from repository secrets:
+GitHub Actions workflows can access `MOD_TOKEN` from repository secrets:
 
 ```yaml
 - name: AI Code Review
   env:
-    MODEL_KEY: ${{ secrets.MODEL_KEY }}
+    MOD_TOKEN: ${{ secrets.MOD_TOKEN }}
     MODEL_PROVIDER: openai
     MODEL_NAME: gpt-4o
   run: |
@@ -55,8 +55,8 @@ For local testing outside of GitHub Copilot:
    OPENAI_API_KEY=sk-your-key-here
    OPENAI_MODEL=gpt-4o
    
-   # Or use generic configuration
-   MODEL_KEY=your-key-here
+   # Or use generic configuration (MODEL_TOKEN or MODEL_KEY work)
+   MODEL_TOKEN=your-key-here
    MODEL_PROVIDER=openai
    MODEL_NAME=gpt-4o
    ```
@@ -64,7 +64,7 @@ For local testing outside of GitHub Copilot:
 3. **Source the environment file:**
    ```bash
    source .env
-   export MODEL_KEY=$OPENAI_API_KEY
+   export MODEL_TOKEN=$OPENAI_API_KEY
    ```
 
 ## Configuration Files
@@ -179,13 +179,19 @@ cat meeting.txt | your-ai-tool --prompt meeting
 
 ### Required Variables
 
-- **`MODEL_KEY`**: API key for your model provider
+- **`MODEL_TOKEN`**: API key for AI model access (GitHub Copilot environment)
   - **Already configured in GitHub Copilot environment secrets**
+  
+- **`MOD_TOKEN`**: API key for AI model access (GitHub Actions)
   - **Already configured in GitHub repository secrets for Actions**
+  
+- **`MODEL_KEY`**: Generic API key (for local development/compatibility)
   - For OpenAI: Your OpenAI API key (sk-...)
   - For Anthropic: Your Anthropic API key
   - For local models: Not required
-  - For local development: Set in your `.env` file (optional)
+  - For local development: Set in your `.env` file
+
+**Note**: The configuration checks for keys in this order: `MODEL_TOKEN` → `MOD_TOKEN` → `MODEL_KEY`
 
 ### Optional Variables
 
@@ -230,30 +236,32 @@ MODEL_NAME=llama2
 
 ### Using with GitHub Copilot (Primary Usage)
 
-**MODEL_KEY is automatically available in GitHub Copilot!**
+**MODEL_TOKEN is automatically available in GitHub Copilot!**
 
 When using GitHub Copilot in this repository, the prompts defined in `node9.prompt.yml` are automatically available:
 
 ```bash
-# Review code (MODEL_KEY automatically injected)
+# Review code (MODEL_TOKEN automatically injected)
 # Copilot reads node9.prompt.yml and uses the code_review prompt
 
 # Generate code
-# Copilot uses code_generate prompt with MODEL_KEY from secrets
+# Copilot uses code_generate prompt with MODEL_TOKEN from secrets
 
 # Get debugging help
-# Copilot uses debug prompt with MODEL_KEY from secrets
+# Copilot uses debug prompt with MODEL_TOKEN from secrets
 ```
 
 The `node9.prompt.yml` file uses template variables that Copilot automatically fills:
-- `{{MODEL_KEY}}` - Filled from Copilot environment secrets
+- `{{MODEL_TOKEN}}` - Filled from Copilot environment secrets
+- `{{MOD_TOKEN}}` - Fallback for GitHub Actions
+- `{{MODEL_KEY}}` - Fallback for local development
 - `{{MODEL_PROVIDER:openai}}` - Defaults to "openai" if not set
 - `{{MODEL_NAME:gpt-4o}}` - Defaults to "gpt-4o" if not set
 
 ### Using with GitHub Copilot CLI (if available)
 
 ```bash
-# MODEL_KEY is automatically available from Copilot environment
+# MODEL_TOKEN is automatically available from Copilot environment
 
 # Review code
 gh copilot --prompt code_review < fs/appl/myapp.lua
@@ -366,14 +374,14 @@ Add to `.vscode/settings.json`:
 
 ### Continuous Integration (GitHub Actions)
 
-**MODEL_KEY is already configured in repository secrets!**
+**MOD_TOKEN is already configured in repository secrets!**
 
-In your CI pipeline, access the MODEL_KEY from secrets:
+In your CI pipeline, access the MOD_TOKEN from secrets:
 
 ```yaml
 - name: AI Code Review
   env:
-    MODEL_KEY: ${{ secrets.MODEL_KEY }}
+    MOD_TOKEN: ${{ secrets.MOD_TOKEN }}
     MODEL_PROVIDER: openai
     MODEL_NAME: gpt-4o
   run: |
@@ -401,17 +409,17 @@ jobs:
       
       - name: Review with AI
         env:
-          MODEL_KEY: ${{ secrets.MODEL_KEY }}
+          MOD_TOKEN: ${{ secrets.MOD_TOKEN }}
         run: |
-          echo "MODEL_KEY is available from repository secrets"
+          echo "MOD_TOKEN is available from repository secrets"
           # Use your AI tool with the prompts from node9.prompt.yml
 ```
 
 ## Security Best Practices
 
 1. **GitHub Secrets Management (Primary)**
-   - **MODEL_KEY is stored in GitHub Copilot environment secrets** ✓
-   - **MODEL_KEY is stored in GitHub repository secrets** ✓
+   - **MODEL_TOKEN is stored in GitHub Copilot environment secrets** ✓
+   - **MOD_TOKEN is stored in GitHub repository secrets** ✓
    - These secrets are never exposed in logs or pull requests
    - Only accessible to authorized GitHub Copilot users and Actions
 
@@ -421,8 +429,9 @@ jobs:
    - Keys should only be in GitHub secrets or secure vaults
 
 3. **Use environment-specific keys**
-   - GitHub Copilot/Actions: Use repository secrets (already configured)
-   - Local development: Use separate keys in `.env` file
+   - GitHub Copilot: Uses MODEL_TOKEN (already configured)
+   - GitHub Actions: Uses MOD_TOKEN (already configured)
+   - Local development: Use MODEL_TOKEN or MODEL_KEY in `.env` file
    - Never use production keys in development
 
 4. **Rotate keys regularly**
@@ -439,19 +448,21 @@ jobs:
 
 ## Troubleshooting
 
-### Issue: "MODEL_KEY not set"
+### Issue: "MODEL_TOKEN/MOD_TOKEN not set"
 
 **For GitHub Copilot users:**
-- MODEL_KEY should be automatically available from Copilot environment secrets
+- MODEL_TOKEN should be automatically available from Copilot environment secrets
 - No action needed - it's already configured!
 
 **For GitHub Actions:**
-- MODEL_KEY should be in repository secrets
-- Verify workflow accesses it: `${{ secrets.MODEL_KEY }}`
+- MOD_TOKEN should be in repository secrets
+- Verify workflow accesses it: `${{ secrets.MOD_TOKEN }}`
 
 **For local development:**
 ```bash
 source .env
+export MODEL_TOKEN=$OPENAI_API_KEY
+# or
 export MODEL_KEY=$OPENAI_API_KEY
 ```
 

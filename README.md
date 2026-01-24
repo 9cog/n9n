@@ -12,9 +12,9 @@ For current status and development information, check out the [Wiki][wiki9]
 
 Node9 includes AI model integration for development assistance:
 
-* **GitHub Copilot Integration** - MODEL_KEY configured in Copilot environment secrets
+* **GitHub Copilot Integration** - MODEL_TOKEN configured in Copilot environment secrets
+* **GitHub Actions Support** - MOD_TOKEN configured in repository secrets for CI/CD
 * **Multiple Specialized Prompts** - code_review, code_generate, debug, build, library, etc.
-* **GitHub Actions Support** - MODEL_KEY available in repository secrets for CI/CD
 
 See [AI Model Configuration Guide](doc/AI_MODEL_CONFIGURATION.md) for usage details.
 Configuration file: [node9.prompt.yml](node9.prompt.yml)

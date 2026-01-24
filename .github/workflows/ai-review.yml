@@ -1,7 +1,8 @@
 name: AI-Powered Code Review
 
-# This workflow demonstrates using MODEL_KEY from repository secrets
-# The MODEL_KEY is already configured in GitHub repository secrets
+# This workflow demonstrates using MOD_TOKEN from repository secrets
+# MOD_TOKEN is configured in GitHub repository secrets for Actions
+# (GitHub Copilot uses MODEL_TOKEN from environment secrets)
 
 on:
   pull_request:
@@ -22,13 +23,13 @@ jobs:
       
       - name: AI Code Review
         env:
-          # MODEL_KEY is available from repository secrets
-          MODEL_KEY: ${{ secrets.MODEL_KEY }}
+          # MOD_TOKEN is available from repository secrets
+          MOD_TOKEN: ${{ secrets.MOD_TOKEN }}
           MODEL_PROVIDER: openai
           MODEL_NAME: gpt-4o
         run: |
           echo "Running AI-powered code review..."
-          echo "MODEL_KEY is configured: ${MODEL_KEY:+YES}"
+          echo "MOD_TOKEN is configured: ${MOD_TOKEN:+YES}"
           
           # Get changed Lua files
           changed_files=$(git diff --name-only origin/main...HEAD | grep '\.lua$' || true)
@@ -37,7 +38,7 @@ jobs:
             echo "Found Lua files to review:"
             echo "$changed_files"
             
-            # Here you would use the MODEL_KEY with your AI tool
+            # Here you would use the MOD_TOKEN with your AI tool
             # Example structure (replace with actual AI tool):
             # for file in $changed_files; do
             #   echo "Reviewing $file..."

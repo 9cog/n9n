@@ -1,10 +1,14 @@
 # Node9 AI Model Configuration
 # This file defines various AI prompts for Node9 development tasks
-# Set MODEL_KEY environment variable with your API key
+# 
+# Secret names:
+# - GitHub Copilot: MODEL_TOKEN (environment secret)
+# - GitHub Actions: MOD_TOKEN (repository secret)
 
 # Model configuration - uses environment variables
+# Will check MODEL_TOKEN (Copilot), MOD_TOKEN (Actions), or MODEL_KEY (generic/local)
 model: "{{MODEL_PROVIDER:openai}}/{{MODEL_NAME:gpt-4o}}"
-api_key: "{{MODEL_KEY}}"
+api_key: "{{MODEL_TOKEN:{{MOD_TOKEN:{{MODEL_KEY}}}}}}"
 temperature: "{{MODEL_TEMPERATURE:0.7}}"
 max_tokens: "{{MODEL_MAX_TOKENS:2000}}"
 

@@ -9,7 +9,11 @@ programmatically. It shows:
 3. Accessing different prompts
 4. Preparing requests for AI models
 
-Note: MODEL_KEY is available from GitHub Copilot/Actions secrets automatically.
+Note: The configuration checks for API keys in this order:
+- MODEL_TOKEN (GitHub Copilot environment secret)
+- MOD_TOKEN (GitHub Actions repository secret)
+- MODEL_KEY (local development/generic)
+
 For local testing, set environment variables or use .env file.
 """
 
@@ -27,21 +31,33 @@ def substitute_vars(text: str, env_vars: Dict[str, str] = None) -> str:
     """
     Substitute template variables like {{VAR:default}} with values.
     Format: {{VAR_NAME:default_value}} or {{VAR_NAME}}
+    Supports nested defaults: {{VAR1:{{VAR2:{{VAR3:default}}}}}}
     """
     if env_vars is None:
         env_vars = dict(os.environ)
     
-    def replace_var(match):
-        var_spec = match.group(1)
-        if ':' in var_spec:
-            var_name, default = var_spec.split(':', 1)
-        else:
-            var_name = var_spec
-            default = ''
+    # Process nested substitutions from innermost to outermost
+    max_iterations = 10  # Prevent infinite loops
+    for _ in range(max_iterations):
+        original = text
         
-        return env_vars.get(var_name, default)
+        def replace_var(match):
+            var_spec = match.group(1)
+            if ':' in var_spec:
+                var_name, default = var_spec.split(':', 1)
+            else:
+                var_name = var_spec
+                default = ''
+            
+            return env_vars.get(var_name, default)
+        
+        text = re.sub(r'\{\{([^}]+)\}\}', replace_var, text)
+        
+        # If no change, we're done
+        if text == original:
+            break
     
-    return re.sub(r'\{\{([^}]+)\}\}', replace_var, text)
+    return text
 
 def prepare_prompt(config: Dict[str, Any], prompt_name: str, input_text: str) -> Dict[str, Any]:
     """
@@ -91,14 +107,22 @@ def demo():
     print("Node9 AI Prompt System Demo")
     print("=" * 60)
     
-    # Check for MODEL_KEY
+    # Check for API keys (in priority order)
+    model_token = os.getenv('MODEL_TOKEN')
+    mod_token = os.getenv('MOD_TOKEN')
     model_key = os.getenv('MODEL_KEY')
-    if model_key:
-        print(f"✓ MODEL_KEY is set (from GitHub secrets or environment)")
+    
+    if model_token:
+        print(f"✓ MODEL_TOKEN is set (GitHub Copilot environment)")
+    elif mod_token:
+        print(f"✓ MOD_TOKEN is set (GitHub Actions)")
+    elif model_key:
+        print(f"✓ MODEL_KEY is set (local development)")
     else:
-        print("⚠ MODEL_KEY not set (required for actual API calls)")
-        print("  For GitHub Copilot/Actions: Already configured in secrets")
-        print("  For local testing: Set MODEL_KEY environment variable")
+        print("⚠ No API key set (MODEL_TOKEN, MOD_TOKEN, or MODEL_KEY)")
+        print("  For GitHub Copilot: MODEL_TOKEN configured in environment secrets")
+        print("  For GitHub Actions: MOD_TOKEN configured in repository secrets")
+        print("  For local testing: Set MODEL_TOKEN or MODEL_KEY environment variable")
     
     print()
     
@@ -148,9 +172,9 @@ def demo():
     print("Configuration is ready to use!")
     print()
     print("Next steps:")
-    print("1. GitHub Copilot users: Just use Copilot (MODEL_KEY already set)")
-    print("2. GitHub Actions: Access via ${{ secrets.MODEL_KEY }}")
-    print("3. Local testing: Set MODEL_KEY in environment or .env file")
+    print("1. GitHub Copilot users: Just use Copilot (MODEL_TOKEN already set)")
+    print("2. GitHub Actions: Access via ${{ secrets.MOD_TOKEN }}")
+    print("3. Local testing: Set MODEL_TOKEN or MODEL_KEY in environment or .env file")
     print()
     print("See doc/AI_MODEL_CONFIGURATION.md for detailed usage guide")
 
