@@ -77,3 +77,8 @@
 /src/styx/utils/ndate
 /src/include/kerndate.h
 
+# Environment files and secrets
+.env
+*.key
+.DS_Store
+

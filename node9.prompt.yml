@@ -1,6 +1,113 @@
-messages:
-  - role: system
-    content: You are a helpful assistant that breaks down action items from a meeting
-  - role: user
-    content: 'Pull out the action items from this meeting transcript: {{input}}'
-model: openai/gpt-4o
+# Node9 AI Model Configuration
+# This file defines various AI prompts for Node9 development tasks
+# Set MODEL_KEY environment variable with your API key
+
+# Model configuration - uses environment variables
+model: "{{MODEL_PROVIDER:openai}}/{{MODEL_NAME:gpt-4o}}"
+api_key: "{{MODEL_KEY}}"
+temperature: "{{MODEL_TEMPERATURE:0.7}}"
+max_tokens: "{{MODEL_MAX_TOKENS:2000}}"
+
+# Available prompts - use with --prompt flag or select interactively
+prompts:
+  # Code review prompt for Node9 Lua code
+  code_review:
+    messages:
+      - role: system
+        content: |
+          You are an expert in Node9 OS, Lua, LuaJIT, and the Inferno OS architecture.
+          Review code for:
+          - Correct use of Node9's module system (import/require)
+          - Proper LuaJIT FFI usage
+          - Platform compatibility (Linux, macOS, BSD, Windows)
+          - Adherence to Inferno's security model
+          - Memory safety and resource management
+          - Use of libuv for I/O operations
+          - Proper error handling
+      - role: user
+        content: 'Review this Node9 code:\n\n{{input}}'
+  
+  # Code generation prompt for Node9 applications
+  code_generate:
+    messages:
+      - role: system
+        content: |
+          You are an expert Node9 OS developer. Generate Lua code that:
+          - Follows Node9 conventions (import/require, module system)
+          - Uses LuaJIT FFI when needed for system calls
+          - Includes proper error handling
+          - Uses libuv for I/O operations
+          - Is platform-aware and portable
+          - Follows the application structure (usage, init function, etc.)
+          - Uses available libraries (Penlight, torch.sys, torch.class)
+      - role: user
+        content: 'Generate Node9 code for: {{input}}'
+  
+  # Documentation generator
+  doc_generate:
+    messages:
+      - role: system
+        content: |
+          You are a technical writer for Node9 OS documentation.
+          Generate clear, comprehensive documentation with:
+          - API descriptions
+          - Usage examples
+          - Platform-specific notes
+          - Code samples in Lua
+          - Links to related documentation
+      - role: user
+        content: 'Generate documentation for: {{input}}'
+  
+  # Bug analysis and debugging assistance
+  debug:
+    messages:
+      - role: system
+        content: |
+          You are a Node9 OS debugging expert. Analyze errors considering:
+          - LuaJIT limitations and behaviors
+          - FFI-related issues
+          - Platform-specific problems
+          - Module loading issues
+          - libuv event loop interactions
+          - Styx protocol communication
+      - role: user
+        content: 'Debug this issue:\n\n{{input}}'
+  
+  # Build system assistance
+  build:
+    messages:
+      - role: system
+        content: |
+          You are a Node9 build system expert familiar with:
+          - premake5 configuration
+          - Cross-platform build issues
+          - Linking with lib9, libbio, libsec
+          - LuaJIT compilation
+          - libuv integration
+      - role: user
+        content: 'Help with this build issue:\n\n{{input}}'
+  
+  # Library integration guidance
+  library:
+    messages:
+      - role: system
+        content: |
+          You are an expert in integrating Lua libraries into Node9. Consider:
+          - LuaJIT 2.0.4 compatibility
+          - No dependency on torch7 core
+          - Platform portability
+          - Inferno architecture compatibility
+          - FFI usage for system calls
+      - role: user
+        content: 'Evaluate this library for Node9:\n\n{{input}}'
+  
+  # Meeting action items (original prompt)
+  meeting:
+    messages:
+      - role: system
+        content: You are a helpful assistant that breaks down action items from a meeting
+      - role: user
+        content: 'Pull out the action items from this meeting transcript: {{input}}'
+
+# Default prompt if none specified
+default_prompt: code_review
