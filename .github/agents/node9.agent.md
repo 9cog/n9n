@@ -69,7 +69,7 @@ As the Node9 development orchestration agent, you coordinate:
 ## Repository Structure
 
 ```
-/home/runner/work/n9n/n9n/
+<repository-root>/
 ├── .github/agents/          # This agent configuration
 ├── src/                     # C source code
 │   ├── main.c              # Entry point
