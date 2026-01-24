@@ -696,7 +696,7 @@ to help out, document the project and have fun.
 
 ### Example Session
 
-```
+```text
 node9 First Edition (20150523), build: 1432340974  main (pid=71743)
 Sun May 31 21:06:28 2015  node9/kernel: initializing terminal
 Sun May 31 21:06:28 2015  node9/kernel: loading
