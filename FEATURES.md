@@ -464,8 +464,8 @@ Node9 is based on Inferno OS and inherits its licensing. See LICENSE file for de
 
 ## Resources
 
-- **Repository**: https://github.com/9cog/n9n (also known as 9n9)
-- **Wiki**: https://github.com/9cog/n9n/wiki
+- **Repository**: https://github.com/9cog/n9n
+- **Wiki**: https://github.com/9cog/n9n/wiki (also referenced as 9n9 in some docs)
 - **Inferno OS**: http://www.vitanuova.com/inferno/
 - **Plan9**: http://plan9.bell-labs.com/plan9/
 - **Lua**: http://www.lua.org/
