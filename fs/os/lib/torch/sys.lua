@@ -35,8 +35,16 @@ ffi.cdef[[
    int clock_gettime(int clk_id, struct timespec *tp);
 ]]
 
--- CLOCK_MONOTONIC = 1 on most systems
-local CLOCK_MONOTONIC = 1
+-- CLOCK_MONOTONIC value varies by platform
+-- Linux: 1, macOS: 6, FreeBSD: 4, Windows: not available
+local CLOCK_MONOTONIC
+if ffi.os == "OSX" then
+   CLOCK_MONOTONIC = 6
+elseif ffi.os:find("BSD") then
+   CLOCK_MONOTONIC = 4
+else
+   CLOCK_MONOTONIC = 1  -- Linux and most other systems
+end
 
 function sys.clock()
    local ts = ffi.new("struct timespec")
@@ -79,7 +87,6 @@ end
 -- returns the name of the OS in use
 --------------------------------------------------------------------------------
 function sys.uname()
-   local ffi = require 'ffi'
    local os = ffi.os
    if os:find('Linux') then
       return 'linux'
