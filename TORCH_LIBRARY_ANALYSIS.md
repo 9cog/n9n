@@ -40,9 +40,24 @@ The torch project (https://github.com/torch/) provides a collection of libraries
 **Priority:** LOW  
 **Rationale:** Neural network libraries. Too specialized and heavy for a general-purpose OS. Would require significant dependencies and are only useful for ML applications.
 
+**Dependencies:**
+- `nn` requires: `torch >= 7.0` (tensor library), `luaffi`, `moses >= 1.0`, and C library `libTHNN`
+- `rnn` requires: `torch >= 7.0`, `nn >= 1.0`, `torchx >= 1.0`, `moses`
+- `nngraph` requires: `torch >= 7.0`, `graph`, `nn`
+
+All three have CMake build systems with substantial C/C++ code for performance.
+
 #### 5. optim
 **Priority:** LOW  
 **Rationale:** Optimization algorithms for machine learning. Only useful if Node9 is used for numerical/scientific computing.
+
+**Dependencies:**
+- Requires: `torch >= 7.0` (the tensor library)
+- All algorithms (SGD, Adam, Adagrad, etc.) extensively use `torch.Tensor` methods
+- The torch tensor library is ~50K+ lines of C code with BLAS/LAPACK backends
+- Example: `x:add(-clr, dfdx)`, `state.m:mul(beta1):add(1-beta1, dfdx)`
+
+**Note:** While the Lua code appears simple, these libraries are NOT self-contained. They depend on the torch7 C tensor library which would require porting a substantial numerical computing stack to Node9.
 
 ### Not Implemented - Graphics/Visualization
 
