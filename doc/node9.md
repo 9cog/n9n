@@ -1,7 +1,6 @@
-                                 NODE9 HACKERS GUIDE
+# NODE9 HACKERS GUIDE
 
-
-CONTENTS
+## CONTENTS
 
 - Introduction and Overview
 - A Simple Example
@@ -14,7 +13,7 @@ CONTENTS
 - Build, User and Portability Notes
 - Status and Current Focus
 
-INTRODUCTION AND OVERVIEW
+## INTRODUCTION AND OVERVIEW
 
 Node9 is a hosted 64-bit operating system based on Bell Lab's Inferno OS that
 uses the Lua scripting language instead of Limbo and the LuaJIT just-in-time
@@ -64,12 +63,12 @@ manual for details).
 Future Node9 development will include a fully functional shell and web-based
 management GUI for cloud environments.
 
-A SIMPLE EXAMPLE
+## A SIMPLE EXAMPLE
 
 The following is the command line application that implements the "unmount"
 command:
 
-------
+```lua
 usage = "unmount [source] target"
 
 function fail(status, msg)
@@ -109,9 +108,9 @@ function init(argv)
     end
     
 end
------
+```
 
-MAJOR CHANGES FROM INFERNO
+## MAJOR CHANGES FROM INFERNO
 
 Node9 required extensive modification of the original Inferno source
 distribution to refocus the design towards an interactive Lua just-in-time
@@ -137,9 +136,9 @@ to create a portable, reactor-based kernel we used the hardware abstraction
 layer provided by 'libuv' to obviate the need for Inferno's legacy
 multi-platform support.
 
-SUBSYSTEMS and STRUCTURES
+## SUBSYSTEMS and STRUCTURES
 
-- Legacy Kernel Design and Components -
+### Legacy Kernel Design and Components
 
 The Inferno OS consists of the Dis virtual machine which runs compiled Limbo
 code and makes system calls into a slightly modified Plan9 kernel.  The full
@@ -170,7 +169,7 @@ Inferno Installation, Operation and Development:
     Inferno Distribution Install Notes: ./inferno-os/doc/install.pdf
     Inferno Programming with Limbo, Phillip Stanley-Marbell
 
-Kernel Servers
+### Kernel Servers
 
 Though Plan9 and Inferno are very similar at the kernel level and share a good deal
 of code, Inferno's device names vary slightly.  Node9 uses Inferno's device names
@@ -178,24 +177,24 @@ and default namespace structure.  Inferno's name services are used where applica
 
 This is a short summary of each of the servers, their names and driver details.
 
-server/device name  short name   description               namespace location
-------------------  ----------   -----------               ------------------
-cons                #c           system console            /dev
-env                 #e           environment variables     /e
-dup                 #d           tracks file handles       /fd
-ip                  #I           TCP/IP stack              /net
-prog                #p           process interface         /prog
-root                #/           root file system          /
-fs-posix            #U           host file system          (usually /)
-ssl                 #D           SSL stream filter         (can't be mounted)
-pipe                #|           interprocess pipes        arbitrary
-srv                 #s           lua namespace services    doesn't apply
-cmd                 #C           host OS command execution /cmd
-cap                 #¤           process privileges        /dev/caphash
-dynld(x)            #L           shared library loader     /dev/dynldc
-indir               #*           device name aliasing      #*<long name>
+| server/device name | short name | description               | namespace location   |
+|--------------------|------------|---------------------------|----------------------|
+| cons               | #c         | system console            | /dev                 |
+| env                | #e         | environment variables     | /e                   |
+| dup                | #d         | tracks file handles       | /fd                  |
+| ip                 | #I         | TCP/IP stack              | /net                 |
+| prog               | #p         | process interface         | /prog                |
+| root               | #/         | root file system          | /                    |
+| fs-posix           | #U         | host file system          | (usually /)          |
+| ssl                | #D         | SSL stream filter         | (can't be mounted)   |
+| pipe               | #\|        | interprocess pipes        | arbitrary            |
+| srv                | #s         | lua namespace services    | doesn't apply        |
+| cmd                | #C         | host OS command execution | /cmd                 |
+| cap                | #¤         | process privileges        | /dev/caphash         |
+| dynld(x)           | #L         | shared library loader     | /dev/dynldc          |
+| indir              | #*         | device name aliasing      | #*<long name>        |
 
-- Lua -
+### Lua
 
 Lua is a powerful, dynamic and light-weight programming language. It excels 
 at functional and OO tasks without forcing the developer into a paradigm
@@ -207,21 +206,21 @@ It's rare to find such a combination of power and simplicity.
 
 Lua may be embedded in applications or used as a standalone language.
 
-- LuaJIT Virtual Machine and the FFI -
+### LuaJIT Virtual Machine and the FFI
 
 LuaJIT is a Just-In-Time Compiler (JIT) for the Lua programming language.
 
 LuaJIT has a powerful Foreign Funtion Interface which allows developers to 
 dynamically bind with C structures and function calls.
 
-- Penlight - 
+### Penlight
 
 Node9 scripts and applications have access to the functional programming,
-configuration and OS path handling components of Penlight.  
+configuration and OS path handling components of Penlight.
 
-THEORY OF OPERATION
+## THEORY OF OPERATION
 
-- Bootstrap -
+### Bootstrap
 
 Although the kernel bootstrap code has been restructured somewhat, the
 sequence is very similar to Plan9 and Inferno.  High level initialization
@@ -237,14 +236,14 @@ looks something like this:
    o Initialize host environment variables
    o Become the base process
 
-- Lua Startup -
+### Lua Startup
 
 As soon as the base process starts it creates a Lua virtual machine state which
 it initializes with the Lua bootstrap module.  It then starts the Lua bootstrap
 module (os/init/nodeinit.lua).  The bootstrap module sythesizes the first Lua
 task (cmd/sh), schedules it and starts the Lua kernel.
 
-- Threads, Kernel Procs, Hosting Procs, Tasks and Virtual Procs -
+### Threads, Kernel Procs, Hosting Procs, Tasks and Virtual Procs
 
 Before moving on we need to carefully define some terms which have a very specific
 meaning in Node9.
@@ -272,8 +271,8 @@ When Lua issues system requests, the kernel dispatches the request into an
 asynchronous thread pool.  A worker thread eventually services the system 
 request by subsuming the thread local state of the virtual process
 for the duration of the request.
- 
-Libuv Event Loop
+
+### Libuv Event Loop
 
 Libuv is a portable I/O and eventing library which is used primarily by NodeJS.  
 It uses the "proactor" pattern that blends synchronous POSIX reactor
@@ -294,7 +293,7 @@ application finishes.  Node9 is slightly different in that the Lua kernel runs
 each iteration of the libuv event loop. After each iteration it
 runs all ready Lua tasks.
 
-Lua Scheduler Sweep
+### Lua Scheduler Sweep
 
 After the Lua bootstrap function constructs the first Lua task it starts the
 Lua kernel which calls the Lua task scheduler.  The scheduler examines the
@@ -308,13 +307,13 @@ the process starts again.  A slight variation on this model might run the
 libuv event loop continuously and dispatch the Lua scheduler when a lua task
 is ready.
 
-Libuv Event Sweep
+### Libuv Event Sweep
 
 The libuv event sweep examines all queued system requests and dispatches
 handlers for them.  All completed I/O and events are processed and any
-system request responses constructed. 
+system request responses constructed.
 
-Wait Mode
+### Wait Mode
 
 If there are no ready events and no syscall responses the event loop waits for
 I/O, otherwise it returns to the Lua scheduler.  This is handled by enabling
@@ -323,7 +322,7 @@ subject area not covered very well even in the libuv documentation. More
 information is available in the documentation for 'libev', the predecessor
 to libuv.
 
-Support Threads
+### Support Threads
 
 Cross-platform event synchronization and maintenance requires the occasional
 background kernel process to run.  The most notable of these in Node9 is the
@@ -334,22 +333,24 @@ asynchronous interprocess message.
 
 In the future this may be converted to a simple libuv keyboard handler.
 
-Anatomy of A System Call
+### Anatomy of A System Call
 
 Each Lua task can issue any system call specified in the Inferno sys library.
 Each time a task issues a system call it implicitly releases the CPU.  The
 easiest way to illustrate this process is to show the Lua kernel code for a
 simple call.
 
-    function self.seek(fd, offset, start)
-        local c_proc = sched.curproc
-        c_proc.s_seek.fd = fd
-        c_proc.s_seek.off = offset
-        c_proc.s_seek.start = start
-        n9.sysreq(c_proc.vproc, n9.Sys_seek)
-        coroutine.yield()
-        return c_proc.s_seek.ret
-    end
+```lua
+function self.seek(fd, offset, start)
+    local c_proc = sched.curproc
+    c_proc.s_seek.fd = fd
+    c_proc.s_seek.off = offset
+    c_proc.s_seek.start = start
+    n9.sysreq(c_proc.vproc, n9.Sys_seek)
+    coroutine.yield()
+    return c_proc.s_seek.ret
+end
+```
 
 This is the seek call to set the current position within an open file.
 (Here "self" is just the handle to the current module "sys")
@@ -376,18 +377,18 @@ Now that the request is queued, the current task yields the CPU.  When the
 task is rescheduled by the Lua scheduler (because it received a response), it
 simply returns the value returned in the "seek" request.
 
-Spawning A New Task
+### Spawning A New Task
 
 Spawning a new task in Node9 is relatively straightforward.  You call
 sys.spawn with the start function and the arguments you want to pass it and 
 the Lua kernel creates a coroutine and Lua process structure to support it.
 The kernel then sets the start function and schedules the task.
 
-Spawning A New Thread
+### Spawning A New Thread
 
 .. describe initializing a new kernel process, proc caps and libuv support ..
 
-Starting A New Application
+### Starting A New Application
 
 Applications are contained in a module similar to library modules.  They 
 start execution in their "init" function.
@@ -402,7 +403,7 @@ application module into the current task environment.  If the application
 module loads successfully, its "init" method is called along with an 
 argv table.
 
-Application Environments and Task Segregation
+### Application Environments and Task Segregation
 
 Just as each Lua task has it's own local variable space, each Node9 application
 is granted it's own execution environment which contains various runtime
@@ -411,7 +412,7 @@ global variable references made by application tasks are dynamically remapped
 into the application's private global space.  All tasks within the same
 application share this space.
 
-Waiting For Process PIDs and Process Completion
+### Waiting For Process PIDs and Process Completion
 
 When any process completes, the scheduler returns it's PID, name and error 
 status to any process waiting to read a line from /prog/<pid>/wait.  In the
@@ -420,7 +421,7 @@ case of applications, the return value will be the application's root 'pid'.
 (The first version of Node9 version bypassed this technique and read the same values
 from a sync channel shared between the parent and child processes.)
 
-Exception Handling
+### Exception Handling
 
 The way that Lua handles exceptions as well as the fact that Plan9 and Inferno
 return error strings instead of error "codes" creates a unique exception
@@ -451,21 +452,21 @@ return <message> in the shell's "lasterr" variable.
 it and report the cause to the shell.  The shell's 'lasterr' variable will 
 then contain "module abort".
 
-TARGET APPLICATIONS
+## TARGET APPLICATIONS
 
 .. discuss various application areas ..
 
-Scientific and Grid Computing
+### Scientific and Grid Computing
 
-Simulation, AI and Gaming
+### Simulation, AI and Gaming
 
-Network Command and Control
+### Network Command and Control
 
-Cloud Computing and Control
+### Cloud Computing and Control
 
-Big Data
+### Big Data
 
-DIRECTORY STRUCTURE
+## DIRECTORY STRUCTURE
 
 - node9 root directory
 - subsystem library dependencies (./libuv, ./luajit)
@@ -484,10 +485,9 @@ DIRECTORY STRUCTURE
 - node9 lua bootstrap (fs/os/init)
 - system documentation (doc)
 
+## BUILD, USER AND PORTABILITY NOTES
 
-BUILD, USER AND PORTABILITY NOTES
-
-- Building Node9 -
+### Building Node9
 
 Node9 uses the lua-based 'premake' (version 5) tool to generate the makefiles.
 It's open source and available for nearly all POSIX and Windows platforms.
@@ -533,7 +533,7 @@ will be generated in the "lib" subdirectory.
 Installation scripts will eventually be included in the distribution to 
 place the runtime system in a convenient filesystem location.
 
-- Startup Notes - 
+### Startup Notes
 
 To test Node9 simply edit the 'run.sh' script to reflect your operating
 systems dynamic library load path environment variable and execute it.
@@ -552,7 +552,7 @@ On Windows:
 The Node9 root directory can be manually overridden using the 'r' 
 commandline option.
 
-- Shell Notes -
+### Shell Notes
 
 In the initial release of Node9 the shell is very basic.  It understands
 how to run lua programs and has several built-in commands to make life 
@@ -563,42 +563,42 @@ you to define functions, evaluate expressions etc.
 This initial release has no job control, pipes or background execution although
 "the hooks are in there".  Seriously.  Just check in 'appl/sh'.
 
- - built in commands 
+#### Built-in commands
 
 The commands 'ls', 'cat' and 'cd'  are built into the shell and allow you to
 navigate the current namespace and examine the contents of files.
 
- - execution envionments
+#### Execution environments
 
 Each external lua application has it's own execution environment and contains
 it's own global variable space.  No application can interfere directly with
 another one.  Each task in the application has it's own local variable space,
 but shares the common application global variable space.
 
- - job control
+#### Job control
 
-(not yet implemented) 
+(not yet implemented)
 
- - return codes
+#### Return codes
 
 (see the exception handling discussion)
 
-- network configuration
+### Network configuration
 
 (explain the 'exportfs', 'mount', 'unmount' CLI apps and how to
 setup SSL operation)
 (see the inferno distribution's doc/install.pdf file for 
 more detailed information on this until we update the docs)
 
-- shutdown
+### Shutdown
 
 (control-D)
 
-STATUS AND CURRENT FOCUS
+## STATUS AND CURRENT FOCUS
 
-- Areas Under Heavy Construction
+### Areas Under Heavy Construction
 
- - system calls -
+#### System calls
 
 As of the initial release almost all of the Inferno system calls have been
 implemented.  The only ones that haven't been implemented are related to the
@@ -629,7 +629,7 @@ sprint, print, fprint, stat, fstat, wstat, fwstat, dirread, errstr, bind,
 mount, unmount, remove, chdir, fd2path, dial, announce, listen, export,
 sleep, millisec, pctl, spawn
 
- - call notes -
+#### Call notes
 
 The primary I/O calls (read, write etc) interact directly with low-level C-based
 read and write calls.  Because of this they require efficient, high performance
@@ -649,7 +649,7 @@ Basic 'pctl' support is implemented to create new namespaces and duplicate
 file streams.  Full implementation will be concurrent with the release of
 multiuser capabilities.
 
-- Remaining Kernel Servers / Drivers
+### Remaining Kernel Servers / Drivers
 
 Several kernel services and devices remain to be ported because they require
 fine-grained interaction between the Inferno "process" model and the Lua
@@ -663,7 +663,7 @@ scheduler.   These are:
 
 Of these devprog (/prog), devsrv and devpipe are the highest priority.
 
-- Libuv portability
+### Libuv portability
 
 A number of system and kernel calls still use the old Inferno portability 
 layer for host system read, write etc.  A major focus of near-term development 
@@ -672,30 +672,31 @@ layer.  This should simplify portability and increase performance significantly.
 
 This also enables the full development of the cloud-oriented aspects of the kernel.
 
-- Cloud Management, Interaction and Apps
+### Cloud Management, Interaction and Apps
 
 When the libuv conversion is complete, a number of ajax-based administration
 and monitoring apps will be included.
 
-- Test Subsystem -
+### Test Subsystem
 
 Functional and unit tests of Node9 are scattered throughout the author's 
 laptop.  Formal inclusion of these tests will make maintenance and scaling
 much more reliable.
 
- - Demo Apps
+### Demo Apps
 
 Demos are currently being considered in a number of areas.  Please feel free to
 suggest any ideas that seem useful.
 
-- Contributing To Project
+### Contributing To Project
 
 Contributing developers are more than welcome.   Read/write access to the 
 repository is simply based on an understanding of the fundamentals, a willingness
 to help out, document the project and have fun.
 
-- Example Session 
+### Example Session
 
+```
 node9 First Edition (20150523), build: 1432340974  main (pid=71743)
 Sun May 31 21:06:28 2015  node9/kernel: initializing terminal
 Sun May 31 21:06:28 2015  node9/kernel: loading
