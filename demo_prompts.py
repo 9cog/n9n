@@ -153,7 +153,7 @@ def demo():
     print(f"Temperature: {request['temperature']}")
     print("Max Tokens: (hidden in demo)")
     print(f"Messages: {len(request['messages'])} messages")
-    print(f"System prompt (first 100 chars): {request['messages'][0]['content'][:100]}...")
+    print("System prompt content: [hidden in demo]")
     print()
     
     # Demo: Code Generation
