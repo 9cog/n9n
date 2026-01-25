@@ -1,0 +1,65 @@
+name: AI-Powered Code Evolve
+
+# This workflow demonstrates using MOD_TOKEN from repository secrets
+# MOD_TOKEN is configured in GitHub repository secrets for Actions
+# (GitHub Copilot uses MODEL_TOKEN from environment secrets)
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  ai-evolve:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      
+      - name: AI Code Evolve
+        env:
+          # MOD_TOKEN is available from repository secrets
+          MOD_TOKEN: ${{ secrets.MOD_TOKEN }}
+          MODEL_PROVIDER: openai
+          MODEL_NAME: gpt-4o
+          GITHUB_BASE_REF: ${{ github.base_ref || 'main' }}
+        run: |
+          echo "Running AI-powered code evolve..."
+          echo "MOD_TOKEN is configured: ${MOD_TOKEN:+YES}"
+          echo "Base branch: $GITHUB_BASE_REF"
+          
+          # Fetch the base branch to ensure we can compare against it
+          if ! git fetch origin "$GITHUB_BASE_REF"; then
+            echo "Failed to fetch base branch: $GITHUB_BASE_REF"
+            exit 1
+          fi
+          
+          # Get Lua files (FETCH_HEAD points to the fetched base branch)
+          lua_files=$(grep '\.lua$')
+          
+          if [ -n "$lua_files" ]; then
+            echo "Found Lua files to evolve:"
+            echo "$lua_files"
+            
+            # Here you would use the MOD_TOKEN with your AI tool
+            # Example structure (replace with actual AI tool):
+            for file in $lua_files; do
+              echo "Evolving $file..."
+              Use node9.prompt.yml code_evolve prompt
+              curl or other AI tool command here
+            done
+          else
+            echo "No Lua files found"
+          fi
+      
+      - name: Comment PR
+        if: always()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "AI evolve complete"
+          # Add PR comment with evolve results if desired
