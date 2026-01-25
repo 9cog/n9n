@@ -105,7 +105,7 @@ tramp(void *arg)
     
 }
 
-uv_idle_t idle_watcher;
+extern uv_idle_t idle_watcher;
 void debug_idle(uv_idle_t* handle) {
     printf("========== idling ===========\n");
 }

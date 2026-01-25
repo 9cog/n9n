@@ -5,7 +5,7 @@
 #include	"keyboard.h"
 
 extern int cflag;
-int	exdebug;
+extern int	exdebug;
 extern int keepbroken;
 uv_tty_t tty;
 uv_async_t ev_conschar;
