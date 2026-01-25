@@ -43,12 +43,11 @@ jobs:
           
           # Get all Lua files in the repository, excluding vendor/third-party code
           # Exclude: LuaJIT-2.0.4, libuv, Penlight (pl), and dynasm directories
+          # Using -prune to avoid descending into excluded directories for efficiency
           echo "Scanning for Lua files to evolve..."
-          all_lua_files=$(find . -name '*.lua' -type f \
-            ! -path './LuaJIT-2.0.4/*' \
-            ! -path './libuv/*' \
-            ! -path './fs/os/lib/pl/*' \
-            ! -path './dynasm/*' \
+          all_lua_files=$(find . \
+            \( -path './LuaJIT-2.0.4' -o -path './libuv' -o -path './fs/os/lib/pl' -o -path './dynasm' \) -prune -o \
+            -name '*.lua' -type f -print \
             | sort)
           
           if [ -z "$all_lua_files" ]; then
@@ -60,7 +59,12 @@ jobs:
           
           # Select the most critical files for evolution
           # Priority: Core system files, modules, and applications
-          critical_files=$(echo "$all_lua_files" | grep -E '(^./src/|^./fs/appl/|^./fs/module/|^./fs/os/lib/torch/)' || echo "$all_lua_files" | head -5)
+          critical_files=$(echo "$all_lua_files" | grep -E '(^./src/|^./fs/appl/|^./fs/module/|^./fs/os/lib/torch/)')
+          
+          # If no critical files match the priority patterns, use the first 5 files as fallback
+          if [ -z "$critical_files" ]; then
+            critical_files=$(echo "$all_lua_files" | head -5)
+          fi
           
           if [ -n "$critical_files" ]; then
             echo "Selected critical Lua files for evolution:"
