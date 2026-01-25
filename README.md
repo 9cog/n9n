@@ -29,7 +29,9 @@ Node9 includes several Lua libraries to enhance development:
   * `torch.class` - Object-oriented programming with inheritance
   * `torch.argcheck` - Advanced function argument validation
 
-See [fs/os/lib/torch/README.md](fs/os/lib/torch/README.md) for torch library documentation.
+See [fs/os/lib/torch/README.md](fs/os/lib/torch/README.md) for torch library documentation.  
+See [examples/torch_libraries_demo.lua](examples/torch_libraries_demo.lua) for usage examples.  
+See [TORCH_TEST_RESULTS.md](TORCH_TEST_RESULTS.md) for test results.
 
 See Also:
 * [Inferno OS][inferno]
