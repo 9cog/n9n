@@ -30,12 +30,20 @@ jobs:
           MOD_TOKEN: ${{ secrets.MOD_TOKEN }}
           MODEL_PROVIDER: openai
           MODEL_NAME: gpt-4o
+          GITHUB_BASE_REF: ${{ github.base_ref || 'main' }}
         run: |
           echo "Running AI-powered code review..."
           echo "MOD_TOKEN is configured: ${MOD_TOKEN:+YES}"
+          echo "Base branch: $GITHUB_BASE_REF"
           
-          # Get changed Lua files
-          changed_files=$(git diff --name-only origin/main...HEAD | grep '\.lua$' || true)
+          # Fetch the base branch to ensure we can compare against it
+          if ! git fetch origin "$GITHUB_BASE_REF"; then
+            echo "Failed to fetch base branch: $GITHUB_BASE_REF"
+            exit 1
+          fi
+          
+          # Get changed Lua files (FETCH_HEAD points to the fetched base branch)
+          changed_files=$(git diff --name-only FETCH_HEAD...HEAD | grep '\.lua$' || true)
           
           if [ -n "$changed_files" ]; then
             echo "Found Lua files to review:"
