@@ -9,7 +9,7 @@
 
 ## 📋 Available Prompts
 
-The `node9.prompt.yml` file includes 7 specialized prompts:
+The `node9.prompt.yml` file includes 8 specialized prompts:
 
 1. **code_review** (default) - Reviews Node9 Lua code for best practices
 2. **code_generate** - Generates Node9-compliant code
@@ -17,7 +17,8 @@ The `node9.prompt.yml` file includes 7 specialized prompts:
 4. **debug** - Analyzes errors and debugging issues
 5. **build** - Helps with build system and compilation
 6. **library** - Evaluates Lua libraries for Node9 integration
-7. **meeting** - Extracts action items from meetings
+7. **code_evolve** - Evolves and improves existing Node9 code
+8. **meeting** - Extracts action items from meetings
 
 ## 🚀 Quick Usage
 

@@ -167,7 +167,26 @@ Evaluates Lua libraries for Node9 integration.
 echo "Can we integrate luasocket into Node9?" | your-ai-tool --prompt library
 ```
 
-### 7. **meeting**
+### 7. **code_evolve**
+Evolves and improves existing Node9 code while preserving functionality.
+
+**Use for:**
+- Code modernization and refactoring
+- Performance optimization
+- Better error handling
+- Improved platform compatibility
+- Enhanced use of Node9 libraries
+- Security improvements
+
+**Example:**
+```bash
+cat fs/appl/myapp.lua | your-ai-tool --prompt code_evolve
+```
+
+**Used by:**
+- `.github/workflows/ai-evolve.yml` - Automated code evolution workflow
+
+### 8. **meeting**
 Extracts action items from meeting transcripts (original example).
 
 **Example:**

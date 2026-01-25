@@ -18,9 +18,11 @@ For local testing, set environment variables or use .env file.
 """
 
 import os
+import sys
 import yaml
+import json
 import re
-from typing import Dict, Any
+from typing import Dict, Any, Tuple
 
 def load_prompt_config(config_file='node9.prompt.yml') -> Dict[str, Any]:
     """Load the prompt configuration from YAML file."""
@@ -59,7 +61,7 @@ def substitute_vars(text: str, env_vars: Dict[str, str] = None) -> str:
     
     return text
 
-def prepare_prompt(config: Dict[str, Any], prompt_name: str, input_text: str) -> Dict[str, Any]:
+def prepare_prompt(config: Dict[str, Any], prompt_name: str, input_text: str) -> Tuple[Dict[str, Any], str]:
     """
     Prepare a prompt for AI model API call.
     
@@ -159,7 +161,7 @@ def demo():
     # Demo: Code Generation
     print("Demo 2: Code Generation Prompt")
     print("-" * 60)
-    request = prepare_prompt(config, 'code_generate', 
+    request, _ = prepare_prompt(config, 'code_generate', 
                             "Create a simple file listing application")
     print(f"Model: {request['model']}")
     user_content = request['messages'][1].get('content', '')
@@ -169,10 +171,24 @@ def demo():
     # Demo: Library Evaluation
     print("Demo 3: Library Evaluation Prompt")
     print("-" * 60)
-    request = prepare_prompt(config, 'library', 
+    request, _ = prepare_prompt(config, 'library', 
                             "luasocket - BSD sockets library for Lua")
     print(f"Model: {request['model']}")
     print(f"System prompt focuses on: Node9 compatibility, LuaJIT 2.0.4, FFI usage")
+    print()
+    
+    # Demo: Code Evolution
+    print("Demo 4: Code Evolution Prompt")
+    print("-" * 60)
+    sample_code_to_evolve = """
+    function init(argv)
+        sys = import("sys")
+        sys.print("Hello\\n")
+    end
+    """
+    request, _ = prepare_prompt(config, 'code_evolve', sample_code_to_evolve)
+    print(f"Model: {request['model']}")
+    print(f"System prompt focuses on: Code improvement, performance, security, maintainability")
     print()
     
     print("=" * 60)
