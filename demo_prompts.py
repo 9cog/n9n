@@ -162,7 +162,8 @@ def demo():
     request = prepare_prompt(config, 'code_generate', 
                             "Create a simple file listing application")
     print(f"Model: {request['model']}")
-    print(f"User prompt: {request['messages'][1]['content'][:80]}...")
+    user_content = request['messages'][1].get('content', '')
+    print(f"User prompt prepared (length: {len(user_content)} characters; content hidden in demo)")
     print()
     
     # Demo: Library Evaluation
