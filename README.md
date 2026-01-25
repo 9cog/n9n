@@ -8,6 +8,17 @@ See the [node9.md][node9] file in ./doc for more information.
 
 For current status and development information, check out the [Wiki][wiki9]
 
+## AI Development Assistant
+
+Node9 includes AI model integration for development assistance:
+
+* **GitHub Copilot Integration** - MODEL_TOKEN configured in Copilot environment secrets
+* **GitHub Actions Support** - MOD_TOKEN configured in repository secrets for CI/CD
+* **Multiple Specialized Prompts** - code_review, code_generate, debug, build, library, etc.
+
+See [AI Model Configuration Guide](doc/AI_MODEL_CONFIGURATION.md) for usage details.
+Configuration file: [node9.prompt.yml](node9.prompt.yml)
+
 ## Libraries
 
 Node9 includes several Lua libraries to enhance development:

@@ -1,0 +1,60 @@
+name: AI-Powered Code Review
+
+# This workflow demonstrates using MOD_TOKEN from repository secrets
+# MOD_TOKEN is configured in GitHub repository secrets for Actions
+# (GitHub Copilot uses MODEL_TOKEN from environment secrets)
+
+on:
+  pull_request:
+    branches: [ main ]
+    paths:
+      - '**.lua'
+      - 'fs/**'
+      - 'src/**'
+
+jobs:
+  ai-review:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      
+      - name: AI Code Review
+        env:
+          # MOD_TOKEN is available from repository secrets
+          MOD_TOKEN: ${{ secrets.MOD_TOKEN }}
+          MODEL_PROVIDER: openai
+          MODEL_NAME: gpt-4o
+        run: |
+          echo "Running AI-powered code review..."
+          echo "MOD_TOKEN is configured: ${MOD_TOKEN:+YES}"
+          
+          # Get changed Lua files
+          changed_files=$(git diff --name-only origin/main...HEAD | grep '\.lua$' || true)
+          
+          if [ -n "$changed_files" ]; then
+            echo "Found Lua files to review:"
+            echo "$changed_files"
+            
+            # Here you would use the MOD_TOKEN with your AI tool
+            # Example structure (replace with actual AI tool):
+            # for file in $changed_files; do
+            #   echo "Reviewing $file..."
+            #   # Use node9.prompt.yml code_review prompt
+            #   # curl or other AI tool command here
+            # done
+          else
+            echo "No Lua files changed in this PR"
+          fi
+      
+      - name: Comment PR
+        if: always()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "AI review complete"
+          # Add PR comment with review results if desired
