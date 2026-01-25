@@ -151,7 +151,7 @@ def demo():
     request, api_key = prepare_prompt(config, 'code_review', sample_code)
     print(f"Model: {request['model']}")
     print(f"Temperature: {request['temperature']}")
-    print(f"Max Tokens: {request['max_tokens']}")
+    print("Max Tokens: (hidden in demo)")
     print(f"Messages: {len(request['messages'])} messages")
     print(f"System prompt (first 100 chars): {request['messages'][0]['content'][:100]}...")
     print()
