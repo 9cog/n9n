@@ -103,11 +103,10 @@ def prepare_prompt(config: Dict[str, Any], prompt_name: str, input_text: str) ->
     
     return {
         'model': model,
-        'api_key': api_key,
         'temperature': temperature,
         'max_tokens': max_tokens,
         'messages': messages
-    }
+    }, api_key
 
 def demo():
     """Demonstrate the prompt system."""
@@ -149,7 +148,7 @@ def demo():
     end
     """
     
-    request = prepare_prompt(config, 'code_review', sample_code)
+    request, api_key = prepare_prompt(config, 'code_review', sample_code)
     print(f"Model: {request['model']}")
     print(f"Temperature: {request['temperature']}")
     print(f"Max Tokens: {request['max_tokens']}")
