@@ -18,9 +18,11 @@ For local testing, set environment variables or use .env file.
 """
 
 import os
+import sys
 import yaml
+import json
 import re
-from typing import Dict, Any
+from typing import Dict, Any, Tuple
 
 def load_prompt_config(config_file='node9.prompt.yml') -> Dict[str, Any]:
     """Load the prompt configuration from YAML file."""
@@ -59,7 +61,7 @@ def substitute_vars(text: str, env_vars: Dict[str, str] = None) -> str:
     
     return text
 
-def prepare_prompt(config: Dict[str, Any], prompt_name: str, input_text: str) -> Dict[str, Any]:
+def prepare_prompt(config: Dict[str, Any], prompt_name: str, input_text: str) -> Tuple[Dict[str, Any], str]:
     """
     Prepare a prompt for AI model API call.
     

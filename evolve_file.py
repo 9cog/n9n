@@ -5,6 +5,9 @@ Node9 File Evolution Script
 This script uses the node9.prompt.yml configuration to evolve a single file
 using AI. It's designed to be called from GitHub Actions workflows.
 
+This script is intentionally self-contained to minimize dependencies in CI/CD.
+Some code is duplicated from demo_prompts.py for this reason.
+
 Usage:
     python3 evolve_file.py <file_path>
 
