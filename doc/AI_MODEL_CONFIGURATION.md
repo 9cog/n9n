@@ -215,10 +215,13 @@ cat meeting.txt | your-ai-tool --prompt meeting
 ### Optional Variables
 
 - **`MODEL_PROVIDER`**: Provider name (default: `openai`)
-  - Options: `openai`, `anthropic`, `ollama`, etc.
+  - Options: `openai`, `github`, `copilot`, `anthropic`, `ollama`, etc.
+  - Use `github` or `copilot` to use GitHub Copilot API endpoint
+  - Auto-detected from token format (tokens starting with `github_pat_` or `ghu_` → GitHub Copilot)
   
 - **`MODEL_NAME`**: Specific model to use (default: `gpt-4o`)
   - OpenAI: `gpt-4o`, `gpt-4-turbo`, `gpt-3.5-turbo`
+  - GitHub Copilot: `gpt-4o`, `gpt-4`, `gpt-3.5-turbo`
   - Anthropic: `claude-3-5-sonnet-20241022`, `claude-3-opus-20240229`
   - Local: `llama2`, `codellama`, etc.
 
@@ -235,12 +238,22 @@ cat meeting.txt | your-ai-tool --prompt meeting
 ```bash
 OPENAI_API_KEY=sk-your-key-here
 OPENAI_MODEL=gpt-4o
+MODEL_PROVIDER=openai
+```
+
+#### GitHub Copilot
+```bash
+# GitHub Copilot PAT (Personal Access Token)
+MODEL_TOKEN=github_pat_your_token_here
+MODEL_PROVIDER=github
+MODEL_NAME=gpt-4o
 ```
 
 #### Anthropic
 ```bash
 ANTHROPIC_API_KEY=your-key-here
 ANTHROPIC_MODEL=claude-3-5-sonnet-20241022
+MODEL_PROVIDER=anthropic
 ```
 
 #### Local Models (e.g., Ollama)
