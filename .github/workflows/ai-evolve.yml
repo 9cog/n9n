@@ -24,6 +24,9 @@ jobs:
         env:
           # MOD_TOKEN is available from repository secrets
           MOD_TOKEN: ${{ secrets.MOD_TOKEN }}
+          # Set MODEL_PROVIDER to 'openai', 'github', or 'copilot'
+          # For GitHub Copilot: use MODEL_PROVIDER: github (or copilot)
+          # For OpenAI: use MODEL_PROVIDER: openai (default)
           MODEL_PROVIDER: openai
           MODEL_NAME: gpt-4o
           GITHUB_BASE_REF: ${{ github.base_ref }}

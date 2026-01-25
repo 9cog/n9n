@@ -13,8 +13,13 @@ Usage:
 
 Environment Variables Required:
     - MODEL_TOKEN, MOD_TOKEN, or MODEL_KEY: API key for the AI model
-    - MODEL_PROVIDER: AI provider (default: openai)
+    - MODEL_PROVIDER: AI provider (openai, github, copilot - default: openai)
     - MODEL_NAME: Model name (default: gpt-4o)
+    
+Supported Providers:
+    - openai: OpenAI API (api.openai.com)
+    - github/copilot: GitHub Copilot API (api.githubcopilot.com)
+    - Auto-detected from token format (github_pat_* or ghu_* → GitHub Copilot)
 """
 
 import os
@@ -97,16 +102,26 @@ def prepare_request(config: Dict[str, Any], prompt_name: str, input_text: str) -
     }, api_key
 
 def call_openai_api(request: Dict[str, Any], api_key: str) -> str:
-    """Call OpenAI API with the prepared request."""
+    """Call AI model API with the prepared request."""
     import urllib.request
     import urllib.error
     
     # Extract model name (remove provider prefix if present)
     model = request['model']
+    provider = 'openai'  # default
     if '/' in model:
-        model = model.split('/', 1)[1]
+        provider, model = model.split('/', 1)
     
-    api_url = "https://api.openai.com/v1/chat/completions"
+    # Determine API endpoint based on provider
+    # Check if token appears to be a GitHub Copilot PAT (starts with 'ghu_' or 'github_pat_')
+    is_github_token = api_key.startswith('ghu_') or api_key.startswith('github_pat_')
+    
+    # Use environment variable MODEL_PROVIDER if set, otherwise infer from token
+    provider_env = os.getenv('MODEL_PROVIDER', '').lower()
+    if provider_env in ('github', 'copilot') or is_github_token:
+        api_url = "https://api.githubcopilot.com/chat/completions"
+    else:
+        api_url = "https://api.openai.com/v1/chat/completions"
     
     payload = {
         "model": model,
