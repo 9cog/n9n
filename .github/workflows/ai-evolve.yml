@@ -41,8 +41,8 @@ jobs:
             exit 1
           fi
           
-          # Get Lua files (FETCH_HEAD points to the fetched base branch)
-          lua_files=$(grep '\.lua$')
+          # Get Lua files that changed compared to base branch (FETCH_HEAD points to the fetched base branch)
+          lua_files=$(git diff --name-only FETCH_HEAD HEAD | grep '\.lua$' || true)
           
           if [ -n "$lua_files" ]; then
             echo "Found Lua files to evolve:"
