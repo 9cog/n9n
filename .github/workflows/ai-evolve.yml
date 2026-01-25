@@ -26,34 +26,59 @@ jobs:
           MOD_TOKEN: ${{ secrets.MOD_TOKEN }}
           MODEL_PROVIDER: openai
           MODEL_NAME: gpt-4o
-          GITHUB_BASE_REF: ${{ github.base_ref || 'main' }}
+          GITHUB_BASE_REF: ${{ github.base_ref }}
         run: |
           echo "Running AI-powered code evolve..."
           echo "MOD_TOKEN is configured: ${MOD_TOKEN:+YES}"
+          
+          # Set default base branch to 'main' if GITHUB_BASE_REF is not set (e.g., on push events)
+          : "${GITHUB_BASE_REF:=main}"
           echo "Base branch: $GITHUB_BASE_REF"
           
           # Fetch the base branch to ensure we can compare against it
           if ! git fetch origin "$GITHUB_BASE_REF"; then
-            echo "Failed to fetch base branch: $GITHUB_BASE_REF"
+            echo "Error: Failed to fetch base branch: $GITHUB_BASE_REF"
             exit 1
           fi
           
-          # Get Lua files (FETCH_HEAD points to the fetched base branch)
-          lua_files=$(grep '\.lua$')
+          # Get all Lua files in the repository, excluding vendor/third-party code
+          # Exclude: LuaJIT-2.0.4, libuv, Penlight (pl), and dynasm directories
+          # Using -prune to avoid descending into excluded directories for efficiency
+          echo "Scanning for Lua files to evolve..."
+          all_lua_files=$(find . \
+            \( -path './LuaJIT-2.0.4' -o -path './libuv' -o -path './fs/os/lib/pl' -o -path './dynasm' \) -prune -o \
+            -name '*.lua' -type f -print \
+            | sort)
           
-          if [ -n "$lua_files" ]; then
-            echo "Found Lua files to evolve:"
-            echo "$lua_files"
+          if [ -z "$all_lua_files" ]; then
+            echo "No Lua files found for evolution"
+            exit 0
+          fi
+          
+          echo "Found $(echo "$all_lua_files" | wc -l) Lua files (excluding vendor code)"
+          
+          # Select the most critical files for evolution
+          # Priority: Core system files, modules, and applications
+          critical_files=$(echo "$all_lua_files" | grep -E '(^./src/|^./fs/appl/|^./fs/module/|^./fs/os/lib/torch/)')
+          
+          # If no critical files match the priority patterns, use the first 5 files as fallback
+          if [ -z "$critical_files" ]; then
+            critical_files=$(echo "$all_lua_files" | head -5)
+          fi
+          
+          if [ -n "$critical_files" ]; then
+            echo "Selected critical Lua files for evolution:"
+            echo "$critical_files"
             
             # Here you would use the MOD_TOKEN with your AI tool
             # Example structure (replace with actual AI tool):
-            for file in $lua_files; do
+            for file in $critical_files; do
               echo "Evolving $file..."
-              Use node9.prompt.yml code_evolve prompt
-              curl or other AI tool command here
+              # Use node9.prompt.yml code_evolve prompt
+              # curl or other AI tool command here
             done
           else
-            echo "No Lua files found"
+            echo "No critical Lua files identified for evolution"
           fi
       
       - name: Comment PR
