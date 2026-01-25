@@ -41,22 +41,40 @@ jobs:
             exit 1
           fi
           
-          # Get Lua files that changed compared to base branch (FETCH_HEAD points to the fetched base branch)
-          lua_files=$(git diff --name-only FETCH_HEAD HEAD | grep '\.lua$' || true)
+          # Get all Lua files in the repository, excluding vendor/third-party code
+          # Exclude: LuaJIT-2.0.4, libuv, Penlight (pl), and dynasm directories
+          echo "Scanning for Lua files to evolve..."
+          all_lua_files=$(find . -name '*.lua' -type f \
+            ! -path './LuaJIT-2.0.4/*' \
+            ! -path './libuv/*' \
+            ! -path './fs/os/lib/pl/*' \
+            ! -path './dynasm/*' \
+            | sort)
           
-          if [ -n "$lua_files" ]; then
-            echo "Found Lua files to evolve:"
-            echo "$lua_files"
+          if [ -z "$all_lua_files" ]; then
+            echo "No Lua files found for evolution"
+            exit 0
+          fi
+          
+          echo "Found $(echo "$all_lua_files" | wc -l) Lua files (excluding vendor code)"
+          
+          # Select the most critical files for evolution
+          # Priority: Core system files, modules, and applications
+          critical_files=$(echo "$all_lua_files" | grep -E '(^./src/|^./fs/appl/|^./fs/module/|^./fs/os/lib/torch/)' || echo "$all_lua_files" | head -5)
+          
+          if [ -n "$critical_files" ]; then
+            echo "Selected critical Lua files for evolution:"
+            echo "$critical_files"
             
             # Here you would use the MOD_TOKEN with your AI tool
             # Example structure (replace with actual AI tool):
-            for file in $lua_files; do
+            for file in $critical_files; do
               echo "Evolving $file..."
-              Use node9.prompt.yml code_evolve prompt
-              curl or other AI tool command here
+              # Use node9.prompt.yml code_evolve prompt
+              # curl or other AI tool command here
             done
           else
-            echo "No Lua files found"
+            echo "No critical Lua files identified for evolution"
           fi
       
       - name: Comment PR
