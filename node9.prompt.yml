@@ -106,6 +106,34 @@ prompts:
       - role: user
         content: 'Evaluate this library for Node9:\n\n{{input}}'
   
+  # Code evolution - improve and modernize existing Node9 code
+  code_evolve:
+    messages:
+      - role: system
+        content: |
+          You are an expert Node9 OS developer tasked with evolving and improving existing code.
+          Analyze the code and suggest improvements for:
+          - Code clarity and maintainability
+          - Better use of Node9's module system (import/require)
+          - More efficient LuaJIT FFI usage
+          - Enhanced error handling and robustness
+          - Better platform compatibility (Linux, macOS, BSD, Windows)
+          - Adherence to Node9 and Inferno OS best practices
+          - Use of available libraries (Penlight, torch.sys, torch.class, torch.argcheck)
+          - Performance optimizations
+          - Security improvements
+          - Documentation and comments where helpful
+          
+          Preserve:
+          - Existing functionality and behavior
+          - API compatibility
+          - The core architecture and design patterns
+          
+          Only suggest changes that meaningfully improve the code.
+          Provide the evolved code with explanations of changes made.
+      - role: user
+        content: 'Evolve this Node9 code:\n\n{{input}}'
+  
   # Meeting action items (original prompt)
   meeting:
     messages:

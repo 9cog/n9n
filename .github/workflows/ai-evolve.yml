@@ -70,13 +70,25 @@ jobs:
             echo "Selected critical Lua files for evolution:"
             echo "$critical_files"
             
-            # Here you would use the MOD_TOKEN with your AI tool
-            # Example structure (replace with actual AI tool):
+            # Install required Python dependencies
+            pip3 install pyyaml --quiet
+            
+            # Make evolve script executable
+            chmod +x evolve_file.py
+            
+            # Evolve each file using the code_evolve prompt from node9.prompt.yml
             for file in $critical_files; do
               echo "Evolving $file..."
-              # Use node9.prompt.yml code_evolve prompt
-              # curl or other AI tool command here
+              python3 evolve_file.py "$file" || echo "⚠ Failed to evolve $file"
             done
+            
+            # Check if any files were modified
+            if git diff --quiet; then
+              echo "No changes made during evolution"
+            else
+              echo "Files were evolved successfully"
+              git diff --stat
+            fi
           else
             echo "No critical Lua files identified for evolution"
           fi
