@@ -113,12 +113,15 @@ def call_openai_api(request: Dict[str, Any], api_key: str) -> str:
         provider, model = model.split('/', 1)
     
     # Determine API endpoint based on provider
+    # Priority: 1) MODEL_PROVIDER env var, 2) provider from model name, 3) token detection
+    provider_env = os.getenv('MODEL_PROVIDER', '').lower()
+    effective_provider = provider_env or provider
+    
     # Check if token appears to be a GitHub Copilot PAT (starts with 'ghu_' or 'github_pat_')
     is_github_token = api_key.startswith('ghu_') or api_key.startswith('github_pat_')
     
-    # Use environment variable MODEL_PROVIDER if set, otherwise infer from token
-    provider_env = os.getenv('MODEL_PROVIDER', '').lower()
-    if provider_env in ('github', 'copilot') or is_github_token:
+    # Select API endpoint
+    if effective_provider in ('github', 'copilot') or is_github_token:
         api_url = "https://api.githubcopilot.com/chat/completions"
     else:
         api_url = "https://api.openai.com/v1/chat/completions"
