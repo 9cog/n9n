@@ -26,15 +26,18 @@ jobs:
           MOD_TOKEN: ${{ secrets.MOD_TOKEN }}
           MODEL_PROVIDER: openai
           MODEL_NAME: gpt-4o
-          GITHUB_BASE_REF: ${{ github.base_ref || 'main' }}
+          GITHUB_BASE_REF: ${{ github.base_ref }}
         run: |
           echo "Running AI-powered code evolve..."
           echo "MOD_TOKEN is configured: ${MOD_TOKEN:+YES}"
+          
+          # Set default base branch to 'main' if GITHUB_BASE_REF is not set (e.g., on push events)
+          : "${GITHUB_BASE_REF:=main}"
           echo "Base branch: $GITHUB_BASE_REF"
           
           # Fetch the base branch to ensure we can compare against it
           if ! git fetch origin "$GITHUB_BASE_REF"; then
-            echo "Failed to fetch base branch: $GITHUB_BASE_REF"
+            echo "Error: Failed to fetch base branch: $GITHUB_BASE_REF"
             exit 1
           fi
           
