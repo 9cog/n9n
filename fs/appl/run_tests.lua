@@ -14,11 +14,11 @@ package.path = root .. "/fs/os/lib/?.lua;" .. root .. "/fs/os/lib/?/init.lua;;"
 
 -- Suite list: {label, script-path}
 local SUITES = {
-    { "torch.sys",      root .. "/fs/appl/test_torch_sys.lua"      },
-    { "torch.class",    root .. "/fs/appl/test_torch_class.lua"     },
-    { "torch.argcheck", root .. "/fs/appl/test_torch_argcheck.lua"  },
-    { "penlight",       root .. "/fs/appl/test_penlight.lua"        },
-    { "environments",   root .. "/fs/appl/test_environments.lua"    },
+    { "torch.sys",      root .. "/fs/appl/test_torch_sys.lua"     },
+    { "torch.class",    root .. "/fs/appl/test_torch_class.lua"   },
+    { "torch.argcheck", root .. "/fs/appl/test_torch_argcheck.lua"},
+    { "penlight",       root .. "/fs/appl/test_penlight.lua"      },
+    { "environments",   root .. "/fs/appl/test_environments.lua"  },
 }
 
 local pass_count = 0
