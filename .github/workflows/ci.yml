@@ -10,15 +10,23 @@ on:
 jobs:
   # ── Lua syntax check ──────────────────────────────────────────────────────
   lint:
-    name: Lua Syntax Check
-    runs-on: ubuntu-latest
+    name: Lua Syntax Check (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, macos-latest ]
     permissions:
       contents: read
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install LuaJIT
+      - name: Install LuaJIT (Linux)
+        if: runner.os == 'Linux'
         run: sudo apt-get install -y luajit
+
+      - name: Install LuaJIT (macOS)
+        if: runner.os == 'macOS'
+        run: brew install luajit
 
       - name: Check Lua syntax (project files)
         run: |
@@ -43,16 +51,24 @@ jobs:
 
   # ── Unit / e2e tests (LuaJIT, no build required) ─────────────────────────
   test-lua:
-    name: Lua Unit Tests
-    runs-on: ubuntu-latest
+    name: Lua Unit Tests (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
     needs: lint
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, macos-latest ]
     permissions:
       contents: read
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install LuaJIT
+      - name: Install LuaJIT (Linux)
+        if: runner.os == 'Linux'
         run: sudo apt-get install -y luajit
+
+      - name: Install LuaJIT (macOS)
+        if: runner.os == 'macOS'
+        run: brew install luajit
 
       - name: Run test suite
         run: |
@@ -133,4 +149,4 @@ jobs:
             echo "One or more required jobs failed."
             exit 1
           fi
-          echo "All required jobs passed."
+          echo "All required jobs passed (Linux + macOS)."

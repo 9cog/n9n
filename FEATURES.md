@@ -153,7 +153,43 @@ Comprehensive Lua utility library with:
 
 **Location**: `fs/os/lib/torch/sys.lua`
 
-### Styx Protocol Libraries
+### JSON Library
+
+A pure-Lua JSON encoder and decoder (RFC 8259 compliant):
+
+#### Encoding
+- **`json.encode(value)`** - Compact JSON string
+- **`json.encode_pretty(value, indent)`** - Indented / pretty-printed JSON
+
+#### Decoding
+- **`json.decode(str)`** - Parse JSON string → Lua value
+- **`json.try_decode(str)`** - Safe decode; returns `nil, errmsg` on failure
+- **`json.is_valid(str)`** - Returns `true` if string is valid JSON
+
+#### Type Mapping
+- `nil` ↔ JSON `null`
+- `boolean` ↔ `true` / `false`
+- `number` ↔ JSON number (integers and floats)
+- `string` ↔ JSON string (full escape handling, `\uXXXX` support)
+- Lua array-like table ↔ JSON array
+- Lua hash table ↔ JSON object
+
+#### Features
+- **No external dependencies** — pure Lua + standard library
+- **Circular reference detection** — raises a descriptive error
+- **Deterministic object key order** (alphabetic) in pretty mode
+- **LuaJIT-compatible** (Lua 5.1 semantics)
+
+**Location**: `fs/os/lib/json.lua`
+
+**Usage**:
+```lua
+local json = require('json')
+local s = json.encode({name="Alice", scores={10,20,30}})
+local t = json.decode(s)
+```
+
+
 
 #### Core Styx Libraries
 - **lib9** - Protocol, conversion, formatting utilities
@@ -200,6 +236,12 @@ Comprehensive Lua utility library with:
 - **ndate** - Date utilities
 - **node9** - Main executable
 - **libnode9** - Node9 library
+
+### CI Platform Matrix
+
+The CI pipeline runs lint and unit tests on multiple platforms:
+- **Linux** (`ubuntu-latest`) — lint, Lua tests, full binary build
+- **macOS** (`macos-latest`) — lint, Lua tests
 
 ### Build Configurations
 Each platform supports:
