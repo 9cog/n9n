@@ -19,6 +19,7 @@ local SUITES = {
     { "torch.argcheck", root .. "/fs/appl/test_torch_argcheck.lua"},
     { "penlight",       root .. "/fs/appl/test_penlight.lua"      },
     { "environments",   root .. "/fs/appl/test_environments.lua"  },
+    { "json",           root .. "/fs/appl/test_json.lua"          },
 }
 
 local pass_count = 0
