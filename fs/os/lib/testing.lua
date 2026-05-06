@@ -2,13 +2,15 @@
 -- testing.lua — minimal TAP-compatible test harness for Node9
 -- Usage:
 --   local T = require('testing')
---   T.plan(N)          -- optional: declare expected test count
---   T.ok(cond, desc)   -- basic assertion
---   T.is(got, exp, d)  -- equality assertion
---   T.not_ok(c, d)     -- negative assertion
---   T.err(fn, d)       -- expect an error
---   T.no_err(fn, d)    -- expect no error
---   T.done()           -- print summary; os.exit(1) on failure
+--   T.plan(N)                    -- optional: declare expected test count
+--   T.ok(cond, desc)             -- basic assertion
+--   T.is(got, exp, d)            -- equality assertion
+--   T.not_ok(c, d)               -- negative assertion
+--   T.err(fn, d)                 -- expect an error
+--   T.no_err(fn, d)              -- expect no error
+--   T.is_deeply(got, exp, d)     -- deep (recursive) table equality
+--   T.throws_ok(fn, pat, d)      -- expect error message matching Lua pattern
+--   T.done()                     -- print summary; os.exit(1) on failure
 --------------------------------------------------------------------------------
 
 local M = {}
@@ -80,6 +82,52 @@ function M.like(str, pattern, desc)
         diag = string.format("'%s' does not match pattern '%s'", tostring(str), pattern)
     end
     return _tap(ok, desc, diag)
+end
+
+-- Deep equality comparison for tables (recursive).
+local function deep_eq(a, b, seen)
+    if a == b then return true end
+    if type(a) ~= "table" or type(b) ~= "table" then return false end
+    seen = seen or {}
+    if seen[a] then return true end  -- cycle guard
+    seen[a] = true
+    -- Check all keys in a exist in b with equal values.
+    for k, v in pairs(a) do
+        if not deep_eq(v, b[k], seen) then return false end
+    end
+    -- Check b has no extra keys.
+    for k in pairs(b) do
+        if a[k] == nil then return false end
+    end
+    return true
+end
+
+--- Assert deep equality between two values (recursively compares tables).
+function M.is_deeply(got, expected, desc)
+    local ok = deep_eq(got, expected)
+    local diag
+    if not ok then
+        diag = string.format("deep mismatch: got %s  expected %s",
+            tostring(got), tostring(expected))
+    end
+    return _tap(ok, desc, diag)
+end
+
+--- Assert that fn() raises an error whose message matches the Lua pattern.
+-- @param fn       zero-argument callable that should raise
+-- @param pattern  Lua string pattern to match against the error message
+-- @param desc     test description
+function M.throws_ok(fn, pattern, desc)
+    local ok, err = pcall(fn)
+    if ok then
+        return _tap(false, desc or "should raise an error matching pattern",
+            "no error was raised")
+    end
+    local msg = tostring(err)
+    local matched = msg:find(pattern) ~= nil
+    local diag = not matched and
+        string.format("error '%s' does not match pattern '%s'", msg, pattern) or nil
+    return _tap(matched, desc, diag)
 end
 
 function M.skip(count, reason)

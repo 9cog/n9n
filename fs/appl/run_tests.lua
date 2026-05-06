@@ -20,6 +20,7 @@ local SUITES = {
     { "penlight",       root .. "/fs/appl/test_penlight.lua"      },
     { "environments",   root .. "/fs/appl/test_environments.lua"  },
     { "json",           root .. "/fs/appl/test_json.lua"          },
+    { "pl.pretty",      root .. "/fs/appl/test_pl_pretty.lua"     },
 }
 
 local pass_count = 0

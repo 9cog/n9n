@@ -113,6 +113,7 @@ Comprehensive Lua utility library with:
 - **Input handling** (`input.lua`)
 - **Data loading** (`data.lua`)
 - **Compatibility** layer (`compat.lua`)
+- **Pretty printer** (`pretty.lua`) — serialize tables to human-readable Lua syntax and read them back
 
 **Location**: `fs/os/lib/pl/`
 
@@ -351,13 +352,36 @@ Comprehensive examples demonstrating library usage:
 **Location**: `examples/torch/`
 
 ### Testing Framework
-- **test_torch_libs.lua** - Comprehensive Torch library tests
-- Tests cover all features of sys, class, and argcheck
-- Includes edge cases and error handling
 
-**Location**: `test_torch_libs.lua`
+#### Test Harness (`testing.lua`)
+A minimal TAP-compatible test harness with assertions:
+- **`ok(cond, desc)`** — basic boolean assertion
+- **`is(got, exp, desc)`** — equality assertion with diagnostic
+- **`not_ok(cond, desc)`** / **`not_is(got, exp, desc)`** — negations
+- **`err(fn, desc)`** / **`no_err(fn, desc)`** — error presence checks
+- **`like(str, pattern, desc)`** — Lua pattern matching
+- **`is_deeply(got, exp, desc)`** — recursive deep equality for tables
+- **`throws_ok(fn, pattern, desc)`** — assert error message matches pattern
+- **`skip(n, reason)`** — skip N tests with reason
+- **`plan(n)`** / **`done()`** — test count declaration and summary
 
-### Documentation
+**Location**: `fs/os/lib/testing.lua`
+
+#### Test Suites (`fs/appl/run_tests.lua` — 7 suites, 365 assertions)
+
+| Suite | Module | Assertions |
+|-------|--------|------------|
+| `test_torch_sys.lua` | `torch.sys` | 43 |
+| `test_torch_class.lua` | `torch.class` | 46 |
+| `test_torch_argcheck.lua` | `torch.argcheck` | 43 |
+| `test_penlight.lua` | `pl.*` core | 58 |
+| `test_environments.lua` | `environments` | 41 |
+| `test_json.lua` | `json` | 81 |
+| `test_pl_pretty.lua` | `pl.pretty` | 53 |
+
+- **Legacy test**: `test_torch_libs.lua` — standalone torch library tests
+
+**Location**: `fs/appl/run_tests.lua`
 
 #### Comprehensive Guides
 - **README.md** - Project overview and quick start
