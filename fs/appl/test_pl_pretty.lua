@@ -104,10 +104,10 @@ T.is(restored.tags[3], "c",      "round-trip: tags[3]")
 -- ── is_deeply: testing harness ───────────────────────────────────────────────
 -- These tests exercise the new is_deeply() assertion added to testing.lua.
 T.is_deeply({},       {},              "is_deeply: empty tables are equal")
-T.is_deeply({1,2,3},  {1,2,3},        "is_deeply: equal arrays")
-T.is_deeply({a=1},    {a=1},          "is_deeply: equal objects")
-T.is_deeply({a={b=2}},{a={b=2}},      "is_deeply: nested equal")
-T.is_deeply({x=1, y={2,3}}, {x=1, y={2,3}}, "is_deeply: mixed nested equal")
+T.is_deeply({1, 2, 3},  {1, 2, 3},        "is_deeply: equal arrays")
+T.is_deeply({a = 1},    {a = 1},          "is_deeply: equal objects")
+T.is_deeply({a = {b = 2}}, {a = {b = 2}},      "is_deeply: nested equal")
+T.is_deeply({x = 1, y = {2, 3}}, {x = 1, y = {2, 3}}, "is_deeply: mixed nested equal")
 
 -- ── throws_ok: testing harness ───────────────────────────────────────────────
 T.throws_ok(function() error("something bad happened") end,
