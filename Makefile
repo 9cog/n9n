@@ -249,19 +249,19 @@ ifneq (,$(libsec_config))
 	@${MAKE} --no-print-directory -f libsec.make config=$(libsec_config)
 endif
 
-ndate:
+ndate: lib9
 ifneq (,$(ndate_config))
 	@echo "==== Building ndate ($(ndate_config)) ===="
 	@${MAKE} --no-print-directory -f ndate.make config=$(ndate_config)
 endif
 
-node9:
+node9: lib9 libbio libsec
 ifneq (,$(node9_config))
 	@echo "==== Building node9 ($(node9_config)) ===="
 	@${MAKE} --no-print-directory -f node9.make config=$(node9_config)
 endif
 
-libnode9:
+libnode9: lib9 libbio libsec
 ifneq (,$(libnode9_config))
 	@echo "==== Building libnode9 ($(libnode9_config)) ===="
 	@${MAKE} --no-print-directory -f libnode9.make config=$(libnode9_config)
