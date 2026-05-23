@@ -255,7 +255,7 @@ ifneq (,$(ndate_config))
 	@${MAKE} --no-print-directory -f ndate.make config=$(ndate_config)
 endif
 
-node9: lib9 libbio libsec
+node9: lib9 libbio libsec ndate
 ifneq (,$(node9_config))
 	@echo "==== Building node9 ($(node9_config)) ===="
 	@${MAKE} --no-print-directory -f node9.make config=$(node9_config)
