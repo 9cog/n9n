@@ -234,46 +234,46 @@ all: $(PROJECTS)
 lib9:
 ifneq (,$(lib9_config))
 	@echo "==== Building lib9 ($(lib9_config)) ===="
-	@${MAKE} --no-print-directory -C src/styx/libs/lib9 -f Makefile config=$(lib9_config)
+	@${MAKE} --no-print-directory -f lib9.make config=$(lib9_config)
 endif
 
 libbio:
 ifneq (,$(libbio_config))
 	@echo "==== Building libbio ($(libbio_config)) ===="
-	@${MAKE} --no-print-directory -C src/styx/libs/libbio -f Makefile config=$(libbio_config)
+	@${MAKE} --no-print-directory -f libbio.make config=$(libbio_config)
 endif
 
 libsec:
 ifneq (,$(libsec_config))
 	@echo "==== Building libsec ($(libsec_config)) ===="
-	@${MAKE} --no-print-directory -C src/styx/libs/libsec -f Makefile config=$(libsec_config)
+	@${MAKE} --no-print-directory -f libsec.make config=$(libsec_config)
 endif
 
 ndate:
 ifneq (,$(ndate_config))
 	@echo "==== Building ndate ($(ndate_config)) ===="
-	@${MAKE} --no-print-directory -C src/styx/utils -f Makefile config=$(ndate_config)
+	@${MAKE} --no-print-directory -f ndate.make config=$(ndate_config)
 endif
 
 node9:
 ifneq (,$(node9_config))
 	@echo "==== Building node9 ($(node9_config)) ===="
-	@${MAKE} --no-print-directory -C src -f node9.make config=$(node9_config)
+	@${MAKE} --no-print-directory -f node9.make config=$(node9_config)
 endif
 
 libnode9:
 ifneq (,$(libnode9_config))
 	@echo "==== Building libnode9 ($(libnode9_config)) ===="
-	@${MAKE} --no-print-directory -C src -f libnode9.make config=$(libnode9_config)
+	@${MAKE} --no-print-directory -f libnode9.make config=$(libnode9_config)
 endif
 
 clean:
-	@${MAKE} --no-print-directory -C src/styx/libs/lib9 -f Makefile clean
-	@${MAKE} --no-print-directory -C src/styx/libs/libbio -f Makefile clean
-	@${MAKE} --no-print-directory -C src/styx/libs/libsec -f Makefile clean
-	@${MAKE} --no-print-directory -C src/styx/utils -f Makefile clean
-	@${MAKE} --no-print-directory -C src -f node9.make clean
-	@${MAKE} --no-print-directory -C src -f libnode9.make clean
+	@${MAKE} --no-print-directory -f lib9.make clean
+	@${MAKE} --no-print-directory -f libbio.make clean
+	@${MAKE} --no-print-directory -f libsec.make clean
+	@${MAKE} --no-print-directory -f ndate.make clean
+	@${MAKE} --no-print-directory -f node9.make clean
+	@${MAKE} --no-print-directory -f libnode9.make clean
 
 help:
 	@echo "Usage: make [config=name] [target]"
